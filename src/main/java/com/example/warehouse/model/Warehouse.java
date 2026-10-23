@@ -96,7 +96,7 @@ public final class Warehouse {
         Map<Batch, Integer> report = new LinkedHashMap<>();
         batches.values().stream()
                 .flatMap(List::stream)
-                .filter(b -> b.expiresWithin(from, days))
+                .filter(b -> b.expiresWithin(from, days) && b.quantity() > 0)
                 .sorted(Comparator.comparing(Batch::expiryDate))
                 .forEach(b -> report.put(b, b.quantity()));
         return Collections.unmodifiableMap(report);

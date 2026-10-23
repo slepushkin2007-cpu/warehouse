@@ -39,5 +39,10 @@ public sealed interface Shipment permits Shipment.Fefo, Shipment.Manual {
                 throw new IllegalArgumentException("quantity > 0");
             }
         }
+
+        @Override
+        public String toString() {
+            return batchNumber + " x " + quantity;
+        }
     }
 }
