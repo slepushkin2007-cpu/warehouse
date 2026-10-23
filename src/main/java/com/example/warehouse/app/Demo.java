@@ -12,6 +12,7 @@ import com.example.warehouse.model.WarehouseException;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class Demo {
@@ -21,127 +22,201 @@ public final class Demo {
 
     public static void main(String[] args) {
         Warehouse wh = new Warehouse();
+        wh.addZone(new StorageZone("FR-1", TemperatureMode.FROZEN));
+        wh.addZone(new StorageZone("CH-1", TemperatureMode.CHILLED));
+        wh.addZone(new StorageZone("AM-1", TemperatureMode.AMBIENT));
+        wh.addZone(new StorageZone("AM-2", TemperatureMode.AMBIENT));
 
-        StorageZone frozen  = new StorageZone("FR-1", TemperatureMode.FROZEN);
-        StorageZone chilled = new StorageZone("CH-1", TemperatureMode.CHILLED);
-        StorageZone ambient = new StorageZone("AM-1", TemperatureMode.AMBIENT);
-        StorageZone wrong   = new StorageZone("AM-2", TemperatureMode.AMBIENT);
-        wh.addZone(frozen);
-        wh.addZone(chilled);
-        wh.addZone(ambient);
-        wh.addZone(wrong);
+        List<Product> products = new ArrayList<>();
 
-        List<Product> products = List.of(
-                new Product(new Product.ProductId("SKU-001"), "Треска",    Category.FROZEN_FISH),
-                new Product(new Product.ProductId("SKU-002"), "Мороженое", Category.ICE_CREAM),
-                new Product(new Product.ProductId("SKU-003"), "Молоко",    Category.MILK),
-                new Product(new Product.ProductId("SKU-004"), "Йогурт",    Category.YOGURT),
-                new Product(new Product.ProductId("SKU-005"), "Крупа",     Category.CEREALS),
-                new Product(new Product.ProductId("SKU-006"), "Тушёнка",   Category.CANNED_FOOD),
-                new Product(new Product.ProductId("SKU-007"), "Сельдь",    Category.FROZEN_FISH),
-                new Product(new Product.ProductId("SKU-008"), "Кефир",     Category.MILK),
-                new Product(new Product.ProductId("SKU-009"), "Сгущёнка",  Category.CANNED_FOOD),
-                new Product(new Product.ProductId("SKU-010"), "Гречка",    Category.CEREALS)
-        );
+        products.add(new Product(new Product.ProductId("SKU-001"), "Треска", Category.FROZEN_FISH));
+        products.add(new Product(new Product.ProductId("SKU-002"), "Сельдь", Category.FROZEN_FISH));
+        products.add(new Product(new Product.ProductId("SKU-003"), "Лосось", Category.FROZEN_FISH));
+        products.add(new Product(new Product.ProductId("SKU-004"), "Минтай", Category.FROZEN_FISH));
+        products.add(new Product(new Product.ProductId("SKU-005"), "Скумбрия", Category.FROZEN_FISH));
+
+        products.add(new Product(new Product.ProductId("SKU-006"), "Пломбир", Category.ICE_CREAM));
+        products.add(new Product(new Product.ProductId("SKU-007"), "Эскимо", Category.ICE_CREAM));
+        products.add(new Product(new Product.ProductId("SKU-008"), "Рожок", Category.ICE_CREAM));
+        products.add(new Product(new Product.ProductId("SKU-009"), "Сорбет", Category.ICE_CREAM));
+        products.add(new Product(new Product.ProductId("SKU-010"), "Фруктовый лед", Category.ICE_CREAM));
+
+        products.add(new Product(new Product.ProductId("SKU-011"), "Молоко 3.2%", Category.MILK));
+        products.add(new Product(new Product.ProductId("SKU-012"), "Молоко 1.5%", Category.MILK));
+        products.add(new Product(new Product.ProductId("SKU-013"), "Топленое молоко", Category.MILK));
+        products.add(new Product(new Product.ProductId("SKU-014"), "Козье молоко", Category.MILK));
+        products.add(new Product(new Product.ProductId("SKU-015"), "Соевое молоко", Category.MILK));
+
+        products.add(new Product(new Product.ProductId("SKU-016"), "Йогурт клубничный", Category.YOGURT));
+        products.add(new Product(new Product.ProductId("SKU-017"), "Йогурт персиковый", Category.YOGURT));
+        products.add(new Product(new Product.ProductId("SKU-018"), "Йогурт натуральный", Category.YOGURT));
+        products.add(new Product(new Product.ProductId("SKU-019"), "Греческий йогурт", Category.YOGURT));
+        products.add(new Product(new Product.ProductId("SKU-020"), "Йогурт черничный", Category.YOGURT));
+
+        products.add(new Product(new Product.ProductId("SKU-021"), "Гречка", Category.CEREALS));
+        products.add(new Product(new Product.ProductId("SKU-022"), "Рис", Category.CEREALS));
+        products.add(new Product(new Product.ProductId("SKU-023"), "Пшено", Category.CEREALS));
+        products.add(new Product(new Product.ProductId("SKU-024"), "Овсянка", Category.CEREALS));
+        products.add(new Product(new Product.ProductId("SKU-025"), "Перловка", Category.CEREALS));
+
+        products.add(new Product(new Product.ProductId("SKU-026"), "Тушёнка говяжья", Category.CANNED_FOOD));
+        products.add(new Product(new Product.ProductId("SKU-027"), "Тушёнка свиная", Category.CANNED_FOOD));
+        products.add(new Product(new Product.ProductId("SKU-028"), "Сгущёнка", Category.CANNED_FOOD));
+        products.add(new Product(new Product.ProductId("SKU-029"), "Шпроты", Category.CANNED_FOOD));
+        products.add(new Product(new Product.ProductId("SKU-030"), "Кукуруза", Category.CANNED_FOOD));
+
         products.forEach(wh::addProduct);
-
         LocalDate today = LocalDate.now();
 
-        wh.receiveBatch(products.get(0).id(),
-                new Batch("B-001", today.minusDays(30), today.plusDays(5),   10), "FR-1");
-        wh.receiveBatch(products.get(0).id(),
-                new Batch("B-002", today.minusDays(20), today.plusDays(20),  15), "FR-1");
-        wh.receiveBatch(products.get(1).id(),
-                new Batch("B-003", today.minusDays(60), today.plusDays(300), 50), "FR-1");
-        wh.receiveBatch(products.get(2).id(),
-                new Batch("B-004", today.minusDays(2),  today.plusDays(2),   8),  "CH-1");
-        wh.receiveBatch(products.get(2).id(),
-                new Batch("B-005", today.minusDays(5),  today.minusDays(1),  5),  "CH-1");
-        wh.receiveBatch(products.get(3).id(),
-                new Batch("B-006", today.minusDays(3),  today.plusDays(7),   20), "CH-1");
-        wh.receiveBatch(products.get(4).id(),
-                new Batch("B-007", today.minusDays(10), today.plusDays(700), 100),"AM-1");
-        wh.receiveBatch(products.get(5).id(),
-                new Batch("B-008", today.minusDays(200),today.plusDays(900), 200),"AM-1");
-        wh.receiveBatch(products.get(6).id(),
-                new Batch("B-009", today.minusDays(15), today.plusDays(15),  12), "FR-1");
-        wh.receiveBatch(products.get(7).id(),
-                new Batch("B-010", today.minusDays(1),  today.plusDays(6),   30), "CH-1");
-        wh.receiveBatch(products.get(8).id(),
-                new Batch("B-011", today.minusDays(100),today.plusDays(1000),40), "AM-1");
-        wh.receiveBatch(products.get(9).id(),
-                new Batch("B-012", today.minusDays(5),  today.plusDays(715), 60), "AM-1");
-
-        for (int i = 13; i <= 25; i++) {
-            Product p = products.get(i % products.size());
-            String zone = switch (p.category().mode()) {
-                case FROZEN  -> "FR-1";
-                case CHILLED -> "CH-1";
-                case AMBIENT -> "AM-1";
-            };
-            wh.receiveBatch(p.id(),
-                    new Batch("B-%03d".formatted(i),
-                            today.minusDays(i),
-                            today.plusDays(i * 3),
-                            5 + i),
-                    zone);
+        int batchCounter = 1;
+        for (Product p : products) {
+            wh.receiveBatch(p.id(), new Batch("B-%03d".formatted(batchCounter++), today.minusDays(40), today.minusDays(2), 10), getZoneFor(p));
+            wh.receiveBatch(p.id(), new Batch("B-%03d".formatted(batchCounter++), today.minusDays(5), today.plusDays(3), 25), getZoneFor(p));
+            wh.receiveBatch(p.id(), new Batch("B-%03d".formatted(batchCounter++), today, today.plusDays(p.category().defaultShelfLifeDays()), 40), getZoneFor(p));
         }
 
-        System.out.println("=== Товары: " + wh.products().size() + " ===");
-        wh.products().forEach(p -> System.out.printf("  %s | %s | %s%n",
-                p.id().sku(), p.name(), p.category().describe()));
+        wh.shipFefo(products.get(0).id(), 30, today);
+        wh.shipFefo(products.get(10).id(), 10, today);
+        wh.shipFefo(products.get(20).id(), 50, today);
+        wh.shipFefo(products.get(4).id(), 65, today);
 
-        System.out.println();
-        System.out.println("=== Партии SKU-001 ===");
-        System.out.println("  batchNumbers = " + wh.batchNumbers(products.get(0).id()));
+        try { wh.shipFefo(products.get(0).id(), 1000, today); } catch (WarehouseException ignored) {}
+        try { wh.shipFefo(products.get(4).id(), 100, today); } catch (WarehouseException ignored) {}
 
-        System.out.println();
-        System.out.println("=== Остаток SKU-001 на " + today + " ===");
-        System.out.println("  " + wh.stockOn(products.get(0).id(), today));
-
-        System.out.println();
-        System.out.println("=== Просроченные SKU-003 на " + today + " ===");
-        wh.expiredOn(products.get(2).id(), today).forEach(b -> System.out.println("  " + b));
-
-        System.out.println();
-        System.out.println("=== FEFO-отгрузка SKU-001 x 12 ===");
-        Shipment sh = wh.shipFefo(products.get(0).id(), 12, today);
-        System.out.println("  " + sh.items() + " всего=" + sh.totalQuantity());
-
-        System.out.println();
-        System.out.println("=== Отгрузка сверх остатка (ожидаем исключение) ===");
         try {
-            wh.shipFefo(products.get(0).id(), 10_000, today);
-        } catch (WarehouseException e) {
-            System.out.println("  " + e.reason() + ": " + e.getMessage());
+            wh.reserve("ORD-100", products.get(1).id(), 15, 3600, Instant.now());
+            wh.reserve("ORD-101", products.get(11).id(), 20, 3600, Instant.now());
+            wh.reserve("ORD-102", products.get(21).id(), 10, 3600, Instant.now());
+            wh.reserve("ORD-103", products.get(5).id(), 5, 3600, Instant.now());
+        } catch (WarehouseException ignored) {}
+
+        System.out.println("================================================================================");
+        System.out.println("                    ПОЛНЫЙ ОТЧЕТ ПО СКЛАДУ НА " + today);
+        System.out.println("================================================================================");
+        System.out.printf("Всего товаров: %d | Всего зон: %d | Всего отгрузок: %d | Активных резервов: %d%n",
+                wh.products().size(), wh.zones().size(), wh.shipments().size(), wh.activeReservations().size());
+        System.out.println("--------------------------------------------------------------------------------");
+
+        for (Product p : wh.products()) {
+            System.out.println("\n[ТОВАР]: " + p.id().sku() + " - " + p.name());
+            System.out.println("  Категория: " + p.category().describe());
+            System.out.println("  Требуемый режим: " + p.category().mode());
+
+            int totalStock = wh.stockOn(p.id(), today);
+            int expiredCount = wh.expiredOn(p.id(), today).size();
+            System.out.printf("  ОБЩИЙ ОСТАТОК (неистекший): %d шт. | Просроченных партий: %d%n", totalStock, expiredCount);
+
+            long reservedQty = wh.activeReservations().stream()
+                    .filter(r -> r.productId().equals(p.id()))
+                    .mapToInt(Reservation::quantity)
+                    .sum();
+            if (reservedQty > 0) {
+                System.out.println("  В РЕЗЕРВЕ: " + reservedQty + " шт.");
+            }
+
+            var numbers = wh.batchNumbers(p.id());
+            System.out.println("  ПАРТИИ:");
+            if (numbers.isEmpty()) {
+                System.out.println("    Нет партий на складе.");
+            } else {
+                for (String num : numbers) {
+                    wh.findBatch(p.id(), num).ifPresent(b -> {
+                        boolean isExpired = b.isExpiredOn(today);
+                        System.out.printf("    - %s | Кол-во: %3d | Пр-во: %s | Срок: %s %s%n",
+                                b.number(), b.quantity(), b.productionDate(), b.expiryDate(),
+                                isExpired ? "[ПРОСРОЧЕНА]" : "[ОК]");
+                    });
+                }
+            }
+
+            System.out.println("  ИСТОРИЯ ОТГРУЗОК:");
+            boolean hasShipments = false;
+            for (Shipment s : wh.shipments()) {
+                for (Shipment.ShippedItem item : s.items()) {
+                    if (numbers.contains(item.batchNumber())) {
+                        System.out.printf("    - %s | Партия: %s | Кол-во: %d%n", s.date(), item.batchNumber(), item.quantity());
+                        hasShipments = true;
+                    }
+                }
+            }
+            if (!hasShipments) {
+                System.out.println("    Отгрузок не было.");
+            }
         }
 
-        System.out.println();
-        System.out.println("=== Отчёт 'сгорит в ближайшие 7 дней' ===");
-        wh.expiringReport(today, 7)
-                .forEach((b, q) -> System.out.printf("  %s до %s — %d шт.%n",
-                        b.number(), b.expiryDate(), q));
+        System.out.println("\n================================================================================");
 
-        System.out.println();
-        System.out.println("=== Резерв ===");
-        Reservation r = wh.reserve("ORD-1", products.get(1).id(), 10, 1, Instant.now());
-        System.out.println("  создан: " + r.orderId() + " qty=" + r.quantity());
+        System.out.println("\n\n=== ЛОГ ВЫПОЛНЕННЫХ ОПЕРАЦИЙ ===");
 
-        System.out.println();
-        System.out.println("=== Совместимость ===");
-        System.out.println("  Молоко + CH-1: " + wh.isCompatible(products.get(2).id(), "CH-1"));
-        System.out.println("  Молоко + AM-1: " + wh.isCompatible(products.get(2).id(), "AM-1"));
+        System.out.println("\n--- FEFO-ОТГРУЗКИ (списывается ближайший срок) ---");
+        System.out.println("Отгрузка " + products.get(0).name() + " (30 шт.) - УСПЕШНО");
+        System.out.println("Отгрузка " + products.get(10).name() + " (10 шт.) - УСПЕШНО");
+        System.out.println("Отгрузка " + products.get(20).name() + " (50 шт.) - УСПЕШНО");
+        System.out.println("Отгрузка " + products.get(4).name() + " (65 шт.) - УСПЕШНО");
 
-        System.out.println();
-        System.out.println("=== Несовместимый приём (ожидаем исключение) ===");
+        System.out.println("\n--- ОШИБКИ ОТГРУЗКИ (превышение остатка) ---");
+        System.out.println("Попытка отгрузить 1000 шт. " + products.get(0).name() + ":");
         try {
-            wh.receiveBatch(products.get(2).id(),
-                    new Batch("B-ERR", today, today.plusDays(1), 1), "AM-1");
+            wh.shipFefo(products.get(0).id(), 1000, today);
         } catch (WarehouseException e) {
-            System.out.println("  " + e.reason() + ": " + e.getMessage());
+            System.out.println("  [ОШИБКА] " + e.reason() + ": " + e.getMessage());
         }
 
-        System.out.println();
-        System.out.println("Всего отгрузок: " + wh.shipments().size());
+        System.out.println("Попытка отгрузить 100 шт. " + products.get(4).name() + " (остаток исчерпан):");
+        try {
+            wh.shipFefo(products.get(4).id(), 100, today);
+        } catch (WarehouseException e) {
+            System.out.println("  [ОШИБКА] " + e.reason() + ": " + e.getMessage());
+        }
+
+        System.out.println("\n--- РЕЗЕРВИРОВАНИЕ (TTL 1 час) ---");
+        try {
+            wh.reserve("ORD-100", products.get(1).id(), 15, 3600, Instant.now());
+            System.out.println("  Зарезервировано 15 шт. " + products.get(1).name());
+
+            wh.reserve("ORD-101", products.get(11).id(), 20, 3600, Instant.now());
+            System.out.println("  Зарезервировано 20 шт. " + products.get(11).name());
+
+            wh.reserve("ORD-102", products.get(21).id(), 10, 3600, Instant.now());
+            System.out.println("  Зарезервировано 10 шт. " + products.get(21).name());
+
+            wh.reserve("ORD-103", products.get(5).id(), 5, 3600, Instant.now());
+            System.out.println("  Зарезервировано 5 шт. " + products.get(5).name());
+
+            System.out.println("Попытка зарезервировать сверх остатка:");
+            wh.reserve("ORD-ERR", products.get(1).id(), 500, 3600, Instant.now());
+        } catch (WarehouseException e) {
+            System.out.println("  [ОШИБКА] " + e.reason() + ": " + e.getMessage());
+        }
+
+        System.out.println("\n--- ПРОВЕРКА ТЕМПЕРАТУРНЫХ РЕЖИМОВ ---");
+        System.out.println("  " + products.get(2).name() + " (FROZEN) + AM-1 (AMBIENT): " + wh.isCompatible(products.get(2).id(), "AM-1"));
+        System.out.println("  " + products.get(12).name() + " (CHILLED) + FR-1 (FROZEN): " + wh.isCompatible(products.get(12).id(), "FR-1"));
+        System.out.println("  " + products.get(22).name() + " (AMBIENT) + AM-2 (AMBIENT): " + wh.isCompatible(products.get(22).id(), "AM-2"));
+        System.out.println("  " + products.get(6).name() + " (FROZEN) + FR-1 (FROZEN): " + wh.isCompatible(products.get(6).id(), "FR-1"));
+
+        System.out.println("Попытка принять " + products.get(2).name() + " в AM-1:");
+        try {
+            wh.receiveBatch(products.get(2).id(), new Batch("ERR-1", today, today.plusDays(1), 1), "AM-1");
+        } catch (WarehouseException e) {
+            System.out.println("  [ОШИБКА] " + e.reason() + ": " + e.getMessage());
+        }
+
+        System.out.println("Попытка принять " + products.get(12).name() + " в FR-1:");
+        try {
+            wh.receiveBatch(products.get(12).id(), new Batch("ERR-2", today, today.plusDays(1), 1), "FR-1");
+        } catch (WarehouseException e) {
+            System.out.println("  [ОШИБКА] " + e.reason() + ": " + e.getMessage());
+        }
+
+        System.out.println("\n================================================================================");
+    }
+
+    private static String getZoneFor(Product p) {
+        return switch (p.category().mode()) {
+            case FROZEN  -> "FR-1";
+            case CHILLED -> "CH-1";
+            case AMBIENT -> "AM-1";
+        };
     }
 }
